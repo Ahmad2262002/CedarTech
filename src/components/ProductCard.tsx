@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from 'src/lib/context/CartContext';
 import { useAuth } from 'src/lib/context/AuthContext';
+import { useTranslation } from 'src/context/LanguageContext';
+import { getLocalizedProduct } from 'src/lib/getLocalizedProduct';
 import { ShoppingBag, ShieldCheck, Zap, Check, Eye } from 'lucide-react';
 import Link from 'next/link';
 
@@ -16,11 +18,15 @@ interface Product {
   images: string[];
   warrantyInfo?: string;
   availabilityStatus: 'in_stock' | 'low_stock' | 'out_of_stock';
+  translations?: Record<string, any>;
+  specifications?: Record<string, string>;
 }
 
 export default function ProductCard({ product }: { product: Product }) {
   const { addToCart } = useCart();
   const { requireAuth } = useAuth();
+  const { locale, t } = useTranslation();
+  const localized = getLocalizedProduct(product, locale);
 
   const images = product.images?.length > 0 ? product.images : ['/images/placeholder.jpg'];
 
@@ -256,15 +262,15 @@ export default function ProductCard({ product }: { product: Product }) {
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-text-tertiary">
             {product.brand}
           </span>
-          {product.warrantyInfo && (
+          {localized.warrantyInfo && (
             <div className="flex items-center gap-1 opacity-90">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              <span className="text-[10px] text-brand-text-tertiary truncate">{product.warrantyInfo}</span>
+              <span className="text-[10px] text-brand-text-tertiary truncate">{localized.warrantyInfo}</span>
             </div>
           )}
         </div>
         <h3 className="text-xl sm:text-[22px] font-bold tracking-tight text-white group-hover:text-accent-blue transition-colors duration-300 leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
-          {product.name}
+          {localized.name}
         </h3>
         <div className="flex items-baseline gap-1 mt-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
           <span className="text-lg font-black text-white">${product.price.toLocaleString()}</span>
@@ -322,7 +328,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <div className="flex flex-col gap-1.5 pointer-events-none">
           {isOutOfStock ? (
             <span className="text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest bg-red-500/20 text-red-400 border border-red-500/30 backdrop-blur-md shadow-[0_2px_12px_rgba(239,68,68,0.2)]">
-              Out of Stock
+              {t('product.out_of_stock', 'Out of Stock')}
             </span>
           ) : isLowStock ? (
             <span className="flex items-center gap-1.5 text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest bg-amber-500/20 text-amber-400 border border-amber-500/30 backdrop-blur-md shadow-[0_2px_12px_rgba(245,158,11,0.2)]">
@@ -330,7 +336,7 @@ export default function ProductCard({ product }: { product: Product }) {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
               </span>
-              Only {product.stock} left
+              {t('product.low_stock', `Only ${product.stock} left`)}
             </span>
           ) : (
             <span className="flex items-center gap-1.5 text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 backdrop-blur-md shadow-[0_2px_12px_rgba(16,185,129,0.2)]">
@@ -338,7 +344,7 @@ export default function ProductCard({ product }: { product: Product }) {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
               </span>
-              In Stock
+              {t('product.in_stock', 'In Stock')}
             </span>
           )}
         </div>
@@ -375,12 +381,12 @@ export default function ProductCard({ product }: { product: Product }) {
           {addedFlash ? (
             <>
               <Check className="w-3.5 h-3.5" />
-              <span>Added</span>
+              <span>{t('product.added', 'Added')}</span>
             </>
           ) : (
             <>
               <ShoppingBag className="w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:scale-110 group-hover/btn:-translate-y-0.5" />
-              <span>{isOutOfStock ? 'Unavailable' : 'Buy'}</span>
+              <span>{isOutOfStock ? t('product.unavailable', 'Unavailable') : t('product.buy_now', 'Buy')}</span>
             </>
           )}
         </button>

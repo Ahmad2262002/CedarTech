@@ -113,9 +113,9 @@ export default function CheckoutPage() {
   const handleWhatsAppConfirm = () => {
     if (!placedOrder) return;
     const text = encodeURIComponent(
-      `Hello Cedar Tech!\nI just placed an order on your website.\n\nOrder ID: ${placedOrder.id}\nPayment: CASH ON DELIVERY\nTotal: $${(cartSubtotal + deliveryFee).toLocaleString()}\n\nDelivery to:\n${name}\n${phone}\n${city}, ${region}\n${streetAddress}`
+      `Hello Agha Tech plus!\nI just placed an order on your website.\n\nOrder ID: ${placedOrder.id}\nPayment: CASH ON DELIVERY\nTotal: $${(cartSubtotal + deliveryFee).toLocaleString()}\n\nDelivery to:\n${name}\n${phone}\n${city}, ${region}\n${streetAddress}`
     );
-    const waNumber = settings?.whatsAppNumber || '96179115521';
+    const waNumber = settings?.whatsAppNumber || '96176743718';
     window.open(`https://wa.me/${waNumber}?text=${text}`, '_blank');
   };
 
@@ -133,7 +133,7 @@ export default function CheckoutPage() {
           <div className="space-y-2">
             <h1 className="text-3xl font-extrabold text-brand-text-primary tracking-tight">Order Placed Successfully!</h1>
             <p className="text-sm text-brand-text-secondary">
-              Thank you for shopping with Cedar Tech. Your order has been registered in our system.
+              Thank you for shopping with Agha Tech plus. Your order has been registered in our system and will be delivered under our official packaging.
             </p>
           </div>
 

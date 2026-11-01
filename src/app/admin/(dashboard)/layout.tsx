@@ -59,8 +59,8 @@ export default async function AdminLayout({
                 </defs>
               </svg>
               <div className="flex flex-col">
-                <span className="font-black text-sm tracking-tight text-brand-text-primary">
-                  CEDAR<span className="text-accent-bright">TECH</span>
+                <span className="font-black text-xs tracking-tight text-brand-text-primary uppercase">
+                  Agha Tech<span className="text-accent-bright"> plus</span>
                 </span>
                 <span className="text-[9px] uppercase tracking-widest text-brand-text-tertiary font-mono">
                   Admin Console
@@ -112,7 +112,7 @@ export default async function AdminLayout({
                 </linearGradient>
               </defs>
             </svg>
-            <span className="font-extrabold tracking-tight text-brand-text-primary text-xs uppercase">Cedar Admin</span>
+            <span className="font-extrabold tracking-tight text-brand-text-primary text-xs uppercase">Agha Tech plus Admin</span>
           </div>
           <div className="flex items-center gap-3">
             <AdminLogoutButton />

@@ -3,6 +3,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useCart } from 'src/lib/context/CartContext';
 import { useAuth } from 'src/lib/context/AuthContext';
+import { useTranslation } from 'src/context/LanguageContext';
 import { useRouter } from 'next/navigation';
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { Button } from './ui/Button';
@@ -10,6 +11,7 @@ import { Button } from './ui/Button';
 export default function CartSidebar() {
   const { cartItems, cartSubtotal, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart } = useCart();
   const { requireAuth } = useAuth();
+  const { t } = useTranslation();
   const router = useRouter();
   const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -48,7 +50,7 @@ export default function CartSidebar() {
         <div className="p-6 border-b border-border-default flex items-center justify-between">
           <div className="flex items-center gap-3 text-brand-text-primary">
             <ShoppingBag className="w-5 h-5 text-accent-bright" />
-            <h2 className="text-xl font-bold tracking-tight">Shopping Cart</h2>
+            <h2 className="text-xl font-bold tracking-tight">{t('cart.title', 'Shopping Cart')}</h2>
             <span className="text-xs px-2.5 py-1 rounded-full font-bold bg-accent-blue/20 text-accent-bright">
               {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
             </span>
@@ -69,16 +71,16 @@ export default function CartSidebar() {
               <div className="w-16 h-16 rounded-full flex items-center justify-center bg-white/5 border border-border-default mb-6">
                 <ShoppingBag className="w-8 h-8 text-brand-text-tertiary" />
               </div>
-              <h3 className="text-brand-text-primary font-bold text-lg tracking-tight">Your cart is empty</h3>
+              <h3 className="text-brand-text-primary font-bold text-lg tracking-tight">{t('cart.empty', 'Your cart is empty')}</h3>
               <p className="text-sm mt-2 text-brand-text-secondary max-w-[240px]">
-                Add some flagship electronics to get started!
+                {t('cart.empty_subtitle', 'Add some flagship electronics to get started!')}
               </p>
               <Button
                 variant="ghost"
                 onClick={() => setIsCartOpen(false)}
                 className="mt-8"
               >
-                Browse Catalog
+                {t('cart.browse', 'Browse Catalog')}
               </Button>
             </div>
           ) : (
@@ -144,19 +146,19 @@ export default function CartSidebar() {
         {cartItems.length > 0 && (
           <div className="p-6 border-t border-border-default bg-brand-surface space-y-5">
             <div className="flex justify-between items-center">
-              <span className="text-brand-text-secondary font-medium">Subtotal</span>
+              <span className="text-brand-text-secondary font-medium">{t('cart.subtotal', 'Subtotal')}</span>
               <span className="text-brand-text-primary font-bold text-xl">${cartSubtotal.toLocaleString()}</span>
             </div>
             <p className="text-xs text-brand-text-tertiary">
-              Free 24h Bekaa delivery available. COD in USD only.
+              {t('cart.delivery_note', 'Fast delivery available. Cash on delivery in USD.')}
             </p>
             <Button
               onClick={handleCheckout}
               fullWidth
               size="lg"
             >
-              <span>Proceed to Checkout</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>{t('cart.checkout', 'Proceed to Checkout')}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </Button>
           </div>
         )}

@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'src/context/LanguageContext';
+import { getLocalizedCategory } from 'src/lib/getLocalizedProduct';
 import { SlidersHorizontal, RotateCcw } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
@@ -10,6 +12,7 @@ interface Category {
   _id: string;
   name: string;
   slug: string;
+  translations?: Record<string, any>;
 }
 
 interface ProductFiltersClientProps {
@@ -32,6 +35,7 @@ export default function ProductFiltersClient({
   activeFilters,
 }: ProductFiltersClientProps) {
   const router = useRouter();
+  const { locale, t } = useTranslation();
 
   const [minPrice, setMinPrice] = useState(activeFilters.minPrice);
   const [maxPrice, setMaxPrice] = useState(activeFilters.maxPrice);
@@ -83,86 +87,89 @@ export default function ProductFiltersClient({
       <div className="flex items-center justify-between border-b border-white/10 pb-4">
         <div className="flex items-center gap-2 text-white">
           <SlidersHorizontal className="w-4 h-4 text-accent-bright" />
-          <h2 className="text-sm font-bold uppercase tracking-wider">Filters</h2>
+          <h2 className="text-sm font-bold uppercase tracking-wider">{t('filters.title', 'Filters')}</h2>
         </div>
         <button
           onClick={handleReset}
           className="text-xs text-brand-text-secondary hover:text-white flex items-center gap-1 transition-colors"
         >
           <RotateCcw className="w-3.5 h-3.5" />
-          <span>Reset</span>
+          <span>{t('filters.reset', 'Reset')}</span>
         </button>
       </div>
 
       {/* Sort Option */}
       <div className="space-y-3">
         <label className="block text-xs font-bold text-brand-text-secondary uppercase tracking-wider">
-          Sort By
+          {t('filters.sort_by', 'Sort By')}
         </label>
         <select
           value={activeFilters.sort}
           onChange={(e) => updateFilters({ sort: e.target.value })}
           className="w-full bg-white/5 border border-white/10 text-white rounded-xl p-3 outline-none text-sm transition-all focus:border-accent-bright focus:ring-1 focus:ring-accent-bright"
         >
-          <option value="latest" className="bg-brand-deep text-white">Latest Arrivals</option>
-          <option value="price_asc" className="bg-brand-deep text-white">Price: Low to High</option>
-          <option value="price_desc" className="bg-brand-deep text-white">Price: High to Low</option>
+          <option value="latest" className="bg-brand-deep text-white">{t('filters.latest', 'Latest Arrivals')}</option>
+          <option value="price_asc" className="bg-brand-deep text-white">{t('filters.price_low_high', 'Price: Low to High')}</option>
+          <option value="price_desc" className="bg-brand-deep text-white">{t('filters.price_high_low', 'Price: High to Low')}</option>
         </select>
       </div>
 
       {/* Categories Filter */}
       <div className="space-y-3">
         <label className="block text-xs font-bold text-brand-text-secondary uppercase tracking-wider">
-          Category
+          {t('filters.category', 'Category')}
         </label>
-        <div className="space-y-1.5 max-h-48 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+        <div className="space-y-1.5 max-h-48 overflow-y-auto pr-2 rtl:pl-2 rtl:pr-0 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
           <button
             onClick={() => updateFilters({ category: '' })}
-            className={`w-full text-left text-sm px-4 py-2.5 rounded-xl transition-colors font-medium ${
+            className={`w-full text-left rtl:text-right text-sm px-4 py-2.5 rounded-xl transition-colors font-medium ${
               !activeFilters.category
                 ? 'bg-accent-blue/20 text-accent-bright border border-accent-blue/30'
                 : 'text-brand-text-secondary hover:bg-white/5 border border-transparent'
             }`}
           >
-            All Categories
+            {t('filters.all_categories', 'All Categories')}
           </button>
-          {categories.map((cat) => (
-            <button
-              key={cat._id}
-              onClick={() => updateFilters({ category: cat.slug })}
-              className={`w-full text-left text-sm px-4 py-2.5 rounded-xl transition-colors font-medium ${
-                activeFilters.category === cat.slug
-                  ? 'bg-accent-blue/20 text-accent-bright border border-accent-blue/30'
-                  : 'text-brand-text-secondary hover:bg-white/5 border border-transparent'
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
+          {categories.map((cat) => {
+            const localizedCat = getLocalizedCategory(cat, locale);
+            return (
+              <button
+                key={cat._id}
+                onClick={() => updateFilters({ category: cat.slug })}
+                className={`w-full text-left rtl:text-right text-sm px-4 py-2.5 rounded-xl transition-colors font-medium ${
+                  activeFilters.category === cat.slug
+                    ? 'bg-accent-blue/20 text-accent-bright border border-accent-blue/30'
+                    : 'text-brand-text-secondary hover:bg-white/5 border border-transparent'
+                }`}
+              >
+                {localizedCat.name}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* Brands Filter */}
       <div className="space-y-3">
         <label className="block text-xs font-bold text-brand-text-secondary uppercase tracking-wider">
-          Brand
+          {t('filters.brand', 'Brand')}
         </label>
-        <div className="space-y-1.5 max-h-48 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+        <div className="space-y-1.5 max-h-48 overflow-y-auto pr-2 rtl:pl-2 rtl:pr-0 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
           <button
             onClick={() => updateFilters({ brand: '' })}
-            className={`w-full text-left text-sm px-4 py-2.5 rounded-xl transition-colors font-medium ${
+            className={`w-full text-left rtl:text-right text-sm px-4 py-2.5 rounded-xl transition-colors font-medium ${
               !activeFilters.brand
                 ? 'bg-accent-blue/20 text-accent-bright border border-accent-blue/30'
                 : 'text-brand-text-secondary hover:bg-white/5 border border-transparent'
             }`}
           >
-            All Brands
+            {t('filters.all_brands', 'All Brands')}
           </button>
           {brands.map((brand) => (
             <button
               key={brand}
               onClick={() => updateFilters({ brand: brand })}
-              className={`w-full text-left text-sm px-4 py-2.5 rounded-xl transition-colors font-medium ${
+              className={`w-full text-left rtl:text-right text-sm px-4 py-2.5 rounded-xl transition-colors font-medium ${
                 activeFilters.brand === brand
                   ? 'bg-accent-blue/20 text-accent-bright border border-accent-blue/30'
                   : 'text-brand-text-secondary hover:bg-white/5 border border-transparent'
@@ -177,13 +184,13 @@ export default function ProductFiltersClient({
       {/* Price range */}
       <div className="space-y-3">
         <label className="block text-xs font-bold text-brand-text-secondary uppercase tracking-wider">
-          Price Range ($)
+          {t('filters.price_range', 'Price Range ($)')}
         </label>
         <form onSubmit={handlePriceApply} className="space-y-3">
           <div className="flex gap-2 items-center">
             <Input
               type="number"
-              placeholder="Min"
+              placeholder={t('filters.min_price', 'Min')}
               min="0"
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
@@ -192,7 +199,7 @@ export default function ProductFiltersClient({
             <span className="text-sm text-brand-text-tertiary">to</span>
             <Input
               type="number"
-              placeholder="Max"
+              placeholder={t('filters.max_price', 'Max')}
               min="0"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
@@ -204,7 +211,7 @@ export default function ProductFiltersClient({
             fullWidth
             size="sm"
           >
-            Apply Price
+            {t('filters.apply_price', 'Apply Price')}
           </Button>
         </form>
       </div>
@@ -212,7 +219,7 @@ export default function ProductFiltersClient({
       {/* Availability Toggle */}
       <div className="flex items-center justify-between pt-4 border-t border-white/10">
         <span className="text-xs font-bold text-brand-text-secondary uppercase tracking-wider">
-          In Stock Only
+          {t('filters.in_stock_only', 'In Stock Only')}
         </span>
         <label className="relative inline-flex items-center cursor-pointer">
           <input

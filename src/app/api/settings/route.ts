@@ -10,9 +10,9 @@ export async function GET() {
     // Create defaults if not found
     if (!settings) {
       settings = await StoreSettings.create({
-        storeName: 'Cedar Tech',
-        contactPhone: '+961 79 115 521',
-        whatsAppNumber: '96179115521',
+        storeName: 'Agha Tech plus',
+        contactPhone: '+961 76 743 718',
+        whatsAppNumber: '96176743718',
         deliveryFee: 5,
         currencySymbol: '$',
         socialLinks: {

@@ -5,12 +5,15 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from 'src/lib/context/AuthContext';
 import { useCart } from 'src/lib/context/CartContext';
+import { useTranslation } from 'src/context/LanguageContext';
+import LanguageSwitcher from './LanguageSwitcher';
 import { Search, ShoppingBag, User, LogOut, LayoutDashboard, X, ChevronDown, Home, Grid } from 'lucide-react';
 
 
 function NavbarContent() {
   const { user, logout, setShowLoginModal } = useAuth();
   const { cartCount, setIsCartOpen } = useCart();
+  const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -51,13 +54,13 @@ function NavbarContent() {
   };
 
   const navLinks = [
-    { label: 'Store',         href: '/products' },
-    { label: 'Smartphones',   href: '/products?category=cell-phones' },
-    { label: 'Laptops',       href: '/products?category=laptops' },
-    { label: 'Custom PCs',    href: '/products?category=desktops-rigs' },
-    { label: 'Gaming Rigs',   href: '/products?category=gaming-gear' },
-    { label: 'Audio & ANC',   href: '/products?category=audio-anc' },
-    { label: 'Components',    href: '/products?category=components-parts' },
+    { label: t('nav.products', 'Store'),         href: '/products' },
+    { label: t('categories.smartphones', 'Smartphones'),   href: '/products?category=cell-phones' },
+    { label: t('categories.laptops', 'Laptops'),       href: '/products?category=laptops' },
+    { label: t('categories.tablets', 'Tablets'),    href: '/products?category=tablets' },
+    { label: t('categories.audio', 'Audio'),   href: '/products?category=audio-anc' },
+    { label: t('categories.wearables', 'Wearables'),   href: '/products?category=wearables' },
+    { label: t('categories.accessories', 'Accessories'),    href: '/products?category=accessories' },
   ];
 
   return (
@@ -87,13 +90,13 @@ function NavbarContent() {
                   </linearGradient>
                 </defs>
               </svg>
-              <span className="text-brand-text-primary font-black text-lg tracking-tight">
-                CEDAR<span className="text-accent-bright">TECH</span>
+              <span className="text-brand-text-primary font-black text-lg tracking-tight uppercase">
+                Agha Tech<span className="text-accent-bright"> plus</span>
               </span>
             </Link>
 
             {/* Desktop Nav Links */}
-            <nav className="hidden lg:flex items-center justify-center flex-1 gap-5 xl:gap-8 px-4">
+            <nav className="hidden lg:flex items-center justify-center flex-1 gap-4 xl:gap-6 px-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
@@ -107,11 +110,14 @@ function NavbarContent() {
 
             {/* Right Actions */}
             <div className="flex items-center gap-2">
+              {/* Language Switcher */}
+              <LanguageSwitcher variant="navbar" />
+
               {/* Search */}
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
                 className="p-2.5 rounded-full text-brand-text-primary hover:bg-white/5 transition-colors"
-                aria-label="Search"
+                aria-label={t('nav.search', 'Search')}
               >
                 <Search className="w-5 h-5" />
               </button>

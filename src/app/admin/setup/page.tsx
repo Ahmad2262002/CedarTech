@@ -98,7 +98,7 @@ export default function AdminSetupPage() {
           </div>
           <h1 className="text-2xl font-extrabold text-white tracking-tight">Admin Setup</h1>
           <p className="text-brand-text-secondary text-sm mt-1.5 max-w-xs mx-auto">
-            Create your administrator account to manage the Cedar Tech store.
+            Create your administrator account to manage the Agha Tech plus store.
           </p>
         </div>
 
@@ -164,7 +164,7 @@ export default function AdminSetupPage() {
                 <input
                   type="email"
                   required
-                  placeholder="admin@cedartech.com"
+                  placeholder="admin@aghatechplus.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-brand-deep border border-border-default focus:border-indigo-500 text-white rounded-lg py-2.5 pl-10 pr-4 outline-none text-sm transition-all placeholder:text-slate-600"

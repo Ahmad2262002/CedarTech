@@ -2,9 +2,48 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'src/context/LanguageContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const { t } = useTranslation();
+
+  const footerColumns = [
+    {
+      title: t('footer.catalog', 'Catalog'),
+      links: [
+        [t('nav.products', 'All Products'), '/products'],
+        [t('categories.smartphones', 'Smartphones'), '/products?category=cell-phones'],
+        [t('categories.laptops', 'Laptops'), '/products?category=laptops'],
+        [t('categories.tablets', 'Tablets'), '/products?category=tablets'],
+        [t('categories.accessories', 'Accessories'), '/products?category=accessories'],
+      ],
+    },
+    {
+      title: t('footer.support', 'Support'),
+      links: [
+        [t('footer.whatsapp', 'WhatsApp Support'), 'https://wa.me/96176743718'],
+        [t('footer.warranty', 'Warranty Policy'), '/about'],
+        [t('footer.shipping', 'Shipping Info'), '/about'],
+      ],
+    },
+    {
+      title: t('footer.account', 'Account'),
+      links: [
+        [t('cart.title', 'Shopping Cart'), '/cart'],
+        [t('footer.admin_portal', 'Admin Portal'), '/admin/login'],
+      ],
+    },
+    {
+      title: t('footer.about_cedar', 'Agha Tech plus'),
+      links: [
+        [t('footer.about_us', 'About Us'), '/about'],
+        [t('footer.privacy', 'Privacy Policy'), '/about'],
+        [t('footer.terms', 'Terms of Use'), '/about'],
+      ],
+    },
+  ];
 
   return (
     <footer className="w-full border-t border-border-default mt-auto bg-brand-surface text-brand-text-secondary">
@@ -22,20 +61,18 @@ export default function Footer() {
                   </linearGradient>
                 </defs>
               </svg>
-              <span className="block text-xl font-black tracking-tight text-brand-text-primary">
-                CEDAR<span className="text-accent-bright">TECH</span>
+              <span className="block text-xl font-black tracking-tight text-brand-text-primary uppercase">
+                Agha Tech<span className="text-accent-bright"> plus</span>
               </span>
             </div>
             <p className="text-sm leading-relaxed">
-              Lebanon&apos;s premier destination for high-performance electronics, custom builds, and flagship devices.
+              {t('footer.tagline', "Lebanon's premier destination for high-performance electronics, custom builds, and flagship devices.")}
             </p>
+            <div className="pt-2">
+              <LanguageSwitcher variant="footer" />
+            </div>
           </div>
-          {[
-            { title: 'Catalog', links: [['All Products','/products'],['Smartphones','/products?category=phones'],['Laptops','/products?category=laptops'],['Gaming','/products?category=gaming'],['Accessories','/products?category=accessories']] },
-            { title: 'Support', links: [['WhatsApp Chat','https://wa.me/96179115521'],['Warranty Policy','#'],['Shipping Info','#'],['Returns','#']] },
-            { title: 'Account', links: [['Shopping Cart','/cart'],['My Orders','#'],['Admin Portal','/admin/login']] },
-            { title: 'Cedar Tech', links: [['About Us','/about'],['Privacy Policy','#'],['Terms of Use','#']] },
-          ].map(({ title, links }) => (
+          {footerColumns.map(({ title, links }) => (
             <div key={title} className="space-y-4">
               <p className="text-xs font-bold uppercase tracking-widest text-brand-text-tertiary">{title}</p>
               <ul className="space-y-3">
@@ -51,8 +88,8 @@ export default function Footer() {
           ))}
         </div>
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8 border-t border-border-default text-xs text-brand-text-tertiary">
-          <p>Copyright © {currentYear} Cedar Tech. All rights reserved.</p>
-          <p>Engineered for Performance · Delivered in Lebanon</p>
+          <p>{t('footer.copyright', `Copyright © ${currentYear} Agha Tech plus. All rights reserved.`)}</p>
+          <p>{t('footer.motto', 'Engineered for Performance · Delivered in Lebanon')}</p>
         </div>
       </div>
     </footer>

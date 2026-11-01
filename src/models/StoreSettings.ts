@@ -18,9 +18,9 @@ export interface IStoreSettings extends Document {
 
 const StoreSettingsSchema = new Schema<IStoreSettings>(
   {
-    storeName: { type: String, required: true, default: 'Cedar Tech' },
-    contactPhone: { type: String, required: true, default: '+961 79 115 521' },
-    whatsAppNumber: { type: String, required: true, default: '96179115521' },
+    storeName: { type: String, required: true, default: 'Agha Tech plus' },
+    contactPhone: { type: String, required: true, default: '+961 76 743 718' },
+    whatsAppNumber: { type: String, required: true, default: '96176743718' },
     deliveryFee: { type: Number, required: true, default: 5 },
     currencySymbol: { type: String, required: true, default: '$' },
     socialLinks: {

@@ -272,7 +272,7 @@ export default function AdminAuthPage() {
             <ShieldAlert className="w-7 h-7" />
           </div>
           <h1 className="text-xl font-extrabold text-brand-text-primary tracking-tight">Admin Console</h1>
-          <p className="text-brand-text-secondary text-xs mt-1">Cedar Tech Management Portal</p>
+          <p className="text-brand-text-secondary text-xs mt-1">Agha Tech plus Management Portal</p>
         </div>
 
         {/* Tabs */}
@@ -318,7 +318,7 @@ export default function AdminAuthPage() {
                   <input
                     type="email"
                     required
-                    placeholder="admin@cedartech.com"
+                    placeholder="admin@aghatechplus.com"
                     value={siEmail}
                     onChange={(e) => setSiEmail(e.target.value)}
                     className="w-full bg-black/40 border border-border-default focus:border-accent-bright text-brand-text-primary rounded-xl py-3 pl-10 pr-4 outline-none text-sm transition-all placeholder:text-brand-text-tertiary"
@@ -411,7 +411,7 @@ export default function AdminAuthPage() {
                       <input
                         type="email"
                         required
-                        placeholder="admin@cedartech.com"
+                        placeholder="admin@aghatechplus.com"
                         value={suEmail}
                         onChange={(e) => setSuEmail(e.target.value)}
                         className="w-full bg-black/40 border border-border-default focus:border-accent-bright text-brand-text-primary rounded-xl py-3 pl-10 pr-4 outline-none text-sm transition-all placeholder:text-brand-text-tertiary"

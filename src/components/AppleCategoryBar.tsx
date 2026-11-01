@@ -3,17 +3,20 @@
 import React from 'react';
 import Link from 'next/link';
 import { Smartphone, Laptop, Cpu, Gamepad2, Headphones, Keyboard } from 'lucide-react';
-
-const CATEGORY_ITEMS = [
-  { label: 'Smartphones', category: 'cell-phones',      icon: <Smartphone className="w-4 h-4" /> },
-  { label: 'Laptops',     category: 'laptops',          icon: <Laptop className="w-4 h-4" /> },
-  { label: 'Custom PCs',  category: 'desktops-rigs',    icon: <Cpu className="w-4 h-4" /> },
-  { label: 'Gaming Rigs', category: 'gaming-gear',      icon: <Gamepad2 className="w-4 h-4" /> },
-  { label: 'Audio & ANC', category: 'audio-anc',        icon: <Headphones className="w-4 h-4" /> },
-  { label: 'Components',  category: 'components-parts', icon: <Keyboard className="w-4 h-4" /> },
-];
+import { useTranslation } from 'src/context/LanguageContext';
 
 export default function AppleCategoryBar() {
+  const { t } = useTranslation();
+
+  const CATEGORY_ITEMS = [
+    { label: t('categories.smartphones', 'Smartphones'), category: 'cell-phones', icon: <Smartphone className="w-4 h-4" /> },
+    { label: t('categories.laptops', 'Laptops'), category: 'laptops', icon: <Laptop className="w-4 h-4" /> },
+    { label: t('categories.custom_pcs', 'Custom PCs'), category: 'desktops-rigs', icon: <Cpu className="w-4 h-4" /> },
+    { label: t('categories.gaming', 'Gaming Rigs'), category: 'gaming-gear', icon: <Gamepad2 className="w-4 h-4" /> },
+    { label: t('categories.audio', 'Audio & ANC'), category: 'audio-anc', icon: <Headphones className="w-4 h-4" /> },
+    { label: t('categories.components', 'Components'), category: 'components-parts', icon: <Keyboard className="w-4 h-4" /> },
+  ];
+
   return (
     <div className="w-full bg-brand-deep/80 backdrop-blur-sm border-b border-white/10 py-3 overflow-x-auto scrollbar-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-start sm:justify-center gap-3 min-w-max">

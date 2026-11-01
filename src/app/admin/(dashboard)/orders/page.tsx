@@ -1,7 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Eye, Clock, CheckCircle, Truck, XCircle, AlertCircle, Loader, ChevronDown, Phone, MapPin, CreditCard } from 'lucide-react';
+import {
+  Eye, Clock, CheckCircle, Truck, XCircle, AlertCircle,
+  Loader, ChevronDown, Phone, MapPin, CreditCard,
+  MessageSquare, Printer, PackageCheck, Box
+} from 'lucide-react';
 
 interface OrderItem {
   _id: string;
@@ -49,7 +53,7 @@ const statusColors: Record<string, string> = {
 const statusIcons: Record<string, React.ReactNode> = {
   pending: <Clock className="w-3.5 h-3.5" />,
   confirmed: <CheckCircle className="w-3.5 h-3.5" />,
-  processing: <Loader className="w-3.5 h-3.5 animate-spin" />,
+  processing: <Box className="w-3.5 h-3.5 animate-pulse" />,
   delivered: <CheckCircle className="w-3.5 h-3.5" />,
   cancelled: <XCircle className="w-3.5 h-3.5" />,
 };
@@ -102,13 +106,129 @@ export default function AdminOrdersPage() {
     setExpandedOrderId(expandedOrderId === id ? null : id);
   };
 
+  const getWhatsAppCustomerUrl = (phone: string, name: string, orderId: string, total: number) => {
+    let clean = phone.replace(/[^0-9]/g, '');
+    if (clean.startsWith('0')) clean = '961' + clean.slice(1);
+    else if (!clean.startsWith('961') && clean.length === 8) clean = '961' + clean;
+    const msg = encodeURIComponent(
+      `Hello ${name}! This is Agha Tech plus regarding your order #${orderId.slice(-6)} (Total: $${total.toLocaleString()}). We are preparing your order in our official Agha Tech plus packaging for doorstep delivery.`
+    );
+    return `https://wa.me/${clean}?text=${msg}`;
+  };
+
+  const handlePrintSlip = (order: Order) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    const itemsHtml = order.items.map(item => `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">${item.name}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center;">${item.quantity}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right;">$${item.price.toLocaleString()}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold;">$${(item.price * item.quantity).toLocaleString()}</td>
+      </tr>
+    `).join('');
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Agha Tech plus - Packing Slip #${order._id.slice(-6)}</title>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 30px; color: #1e293b; max-width: 800px; margin: auto; }
+          .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0284c7; padding-bottom: 15px; margin-bottom: 25px; }
+          .brand { font-size: 26px; font-weight: 900; text-transform: uppercase; color: #0f172a; }
+          .brand span { color: #0284c7; }
+          .badge { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: bold; }
+          .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; font-size: 13px; line-height: 1.6; }
+          .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; }
+          th { background: #f1f5f9; padding: 10px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; }
+          .total-box { margin-left: auto; width: 280px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; font-size: 13px; }
+          .total-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+          .final-total { border-top: 2px solid #0f172a; padding-top: 8px; font-weight: 900; font-size: 16px; color: #0f172a; }
+          .seal-box { margin-top: 30px; border: 2px dashed #0284c7; background: #f0f9ff; padding: 15px; border-radius: 10px; text-align: center; font-size: 12px; color: #0369a1; }
+          @media print { body { padding: 0; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div>
+            <div class="brand">Agha Tech <span>plus</span></div>
+            <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Official Customer Order & Packaging Slip</div>
+          </div>
+          <div style="text-align: right;">
+            <div class="badge">Official Sealed Package</div>
+            <div style="font-family: monospace; font-size: 12px; margin-top: 5px; color: #64748b;">Order Ref: #${order._id}</div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <strong style="color: #0f172a; display: block; margin-bottom: 5px;">Customer & Delivery Details:</strong>
+            <div><strong>Recipient:</strong> ${order.customerDetails.name}</div>
+            <div><strong>Phone:</strong> ${order.customerDetails.phone}</div>
+            <div><strong>Destination:</strong> ${order.shippingAddress.streetAddress}, ${order.shippingAddress.city}, ${order.shippingAddress.region}</div>
+            ${order.shippingAddress.details ? `<div><strong>Notes/Landmarks:</strong> ${order.shippingAddress.details}</div>` : ''}
+          </div>
+          <div class="card">
+            <strong style="color: #0f172a; display: block; margin-bottom: 5px;">Payment & Delivery Mode:</strong>
+            <div><strong>Payment Method:</strong> CASH ON DELIVERY (USD)</div>
+            <div><strong>Package Status:</strong> Sourced & Packaged under Agha Tech plus</div>
+            <div><strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}</div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Item Description</th>
+              <th style="text-align: center;">Qty</th>
+              <th style="text-align: right;">Unit Price</th>
+              <th style="text-align: right;">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsHtml}
+          </tbody>
+        </table>
+
+        <div class="total-box">
+          <div class="total-row"><span>Items Subtotal:</span><span>$${order.subtotal.toLocaleString()}</span></div>
+          <div class="total-row"><span>Nationwide Delivery:</span><span>$${order.deliveryFee.toLocaleString()}</span></div>
+          <div class="total-row final-total"><span>Amount to Pay (COD):</span><span>$${order.total.toLocaleString()} USD</span></div>
+        </div>
+
+        <div class="seal-box">
+          <strong>Agha Tech plus Quality Guarantee</strong><br/>
+          This product was inspected, sealed, and packaged under official Agha Tech plus supervision.<br/>
+          For customer support or warranty verification: WhatsApp +961 76 743 718
+        </div>
+
+        <script>
+          window.onload = function() { window.print(); }
+        </script>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   return (
     <div className="space-y-6">
       
       {/* Header */}
-      <div className="border-b border-border-default pb-5">
-        <h1 className="text-3xl font-extrabold text-white tracking-tight">Order Management</h1>
-        <p className="text-sm text-brand-text-secondary mt-1">Review orders, verify local money transfers, and process shipments</p>
+      <div className="border-b border-border-default pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-extrabold text-white tracking-tight">Order Management</h1>
+          <p className="text-sm text-brand-text-secondary mt-1">
+            Track customer orders, contact clients via WhatsApp, and prepare Agha Tech plus packaging slips
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs bg-brand-surface border border-border-default px-3 py-1.5 rounded-xl text-brand-text-secondary font-mono">
+            {orders.length} total orders
+          </span>
+        </div>
       </div>
 
       {/* Orders Table list */}
@@ -171,22 +291,42 @@ export default function AdminOrdersPage() {
                           </span>
                         </td>
                         <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
-                          <div className="inline-block relative">
-                            {updatingId === order._id ? (
-                              <Loader className="w-4 h-4 text-indigo-500 animate-spin mr-3" />
-                            ) : (
-                              <select
-                                value={order.status}
-                                onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                                className="bg-brand-deep border border-slate-850 text-white rounded-lg p-1.5 text-[11px] outline-none font-semibold"
-                              >
-                                <option value="pending">Pending</option>
-                                <option value="confirmed">Confirmed</option>
-                                <option value="processing">Processing</option>
-                                <option value="delivered">Delivered</option>
-                                <option value="cancelled">Cancelled</option>
-                              </select>
-                            )}
+                          <div className="inline-flex items-center gap-2">
+                            <a
+                              href={getWhatsAppCustomerUrl(order.customerDetails.phone, order.customerDetails.name, order._id, order.total)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-1.5 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 transition-colors"
+                              title="Chat with Customer on WhatsApp"
+                            >
+                              <MessageSquare className="w-3.5 h-3.5" />
+                            </a>
+
+                            <button
+                              onClick={() => handlePrintSlip(order)}
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white border border-border-default transition-colors"
+                              title="Print Agha Tech plus Packing Slip"
+                            >
+                              <Printer className="w-3.5 h-3.5" />
+                            </button>
+
+                            <div className="inline-block relative">
+                              {updatingId === order._id ? (
+                                <Loader className="w-4 h-4 text-indigo-500 animate-spin mr-3" />
+                              ) : (
+                                <select
+                                  value={order.status}
+                                  onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                                  className="bg-brand-deep border border-slate-850 text-white rounded-lg p-1.5 text-[11px] outline-none font-semibold"
+                                >
+                                  <option value="pending">Pending</option>
+                                  <option value="confirmed">Confirmed</option>
+                                  <option value="processing">Sourcing & Packaging</option>
+                                  <option value="delivered">Out for Delivery</option>
+                                  <option value="cancelled">Cancelled</option>
+                                </select>
+                              )}
+                            </div>
                           </div>
                         </td>
                       </tr>
@@ -211,22 +351,53 @@ export default function AdminOrdersPage() {
                                     <p><span className="text-brand-text-tertiary font-medium">Landmarks:</span> {order.shippingAddress.details}</p>
                                   )}
                                 </div>
+
+                                <div className="pt-2 flex flex-wrap gap-2">
+                                  <a
+                                    href={getWhatsAppCustomerUrl(order.customerDetails.phone, order.customerDetails.name, order._id, order.total)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 text-xs font-semibold"
+                                  >
+                                    <MessageSquare className="w-3.5 h-3.5" />
+                                    <span>WhatsApp Customer</span>
+                                  </a>
+                                  <button
+                                    onClick={() => handlePrintSlip(order)}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white border border-border-default text-xs font-semibold"
+                                  >
+                                    <Printer className="w-3.5 h-3.5" />
+                                    <span>Print Agha Tech plus Slip</span>
+                                  </button>
+                                </div>
                               </div>
 
-                              {/* Middle details - Payment reference */}
+                              {/* Middle details - Fulfillment checklist */}
                               <div className="space-y-4">
                                 <div className="flex items-center gap-1.5 text-white font-bold border-b border-slate-850 pb-2">
-                                  <CreditCard className="w-4 h-4 text-accent-bright" />
-                                  <span>Payment details</span>
+                                  <PackageCheck className="w-4 h-4 text-accent-bright" />
+                                  <span>Fulfillment & Packaging Workflow</span>
                                 </div>
-                                <div className="space-y-2 text-slate-350">
-                                  <p><span className="text-brand-text-tertiary font-medium">Payment Mode:</span> <span className="uppercase">{order.paymentMethod}</span></p>
-                                  {order.paymentDetails?.referenceCode && (
-                                    <p><span className="text-brand-text-tertiary font-medium">Ref. Code:</span> <span className="font-mono text-accent-bright font-bold bg-brand-surface border border-slate-850 px-2 py-0.5 rounded">{order.paymentDetails.referenceCode}</span></p>
-                                  )}
-                                  {order.paymentDetails?.notes && (
-                                    <p><span className="text-brand-text-tertiary font-medium">Sender Notes:</span> {order.paymentDetails.notes}</p>
-                                  )}
+                                <div className="space-y-2.5 text-xs text-slate-350">
+                                  <div className="p-3 rounded-xl bg-white/5 border border-border-default space-y-1.5">
+                                    <p className="text-white font-semibold flex items-center gap-1.5">
+                                      <Box className="w-3.5 h-3.5 text-accent-bright" />
+                                      <span>Agha Tech plus Packaging Process:</span>
+                                    </p>
+                                    <p className="text-[11px] text-brand-text-secondary leading-relaxed">
+                                      1. Source ordered items from authorized distributors.<br/>
+                                      2. Inspect factory seals and verify serial numbers.<br/>
+                                      3. Enclose into official Agha Tech plus tamper-proof branded packaging.<br/>
+                                      4. Dispatch for doorstep Cash on Delivery (COD).
+                                    </p>
+                                  </div>
+
+                                  <div className="space-y-1 text-slate-350">
+                                    <p><span className="text-brand-text-tertiary font-medium">Payment Mode:</span> <span className="uppercase font-semibold text-white">{order.paymentMethod}</span> (Cash on Delivery)</p>
+                                    {order.paymentDetails?.notes && (
+                                      <p><span className="text-brand-text-tertiary font-medium">Sender Notes:</span> {order.paymentDetails.notes}</p>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
 
@@ -257,8 +428,8 @@ export default function AdminOrdersPage() {
                                       <span className="font-mono text-white">${order.deliveryFee.toLocaleString()}</span>
                                     </div>
                                     <div className="flex justify-between text-white font-bold border-t border-border-default pt-1.5 text-sm">
-                                      <span>Total</span>
-                                      <span className="font-mono text-accent-bright">${order.total.toLocaleString()}</span>
+                                      <span>Total to Collect</span>
+                                      <span className="font-mono text-emerald-400">${order.total.toLocaleString()} USD</span>
                                     </div>
                                   </div>
                                 </div>

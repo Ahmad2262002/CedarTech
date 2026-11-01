@@ -26,7 +26,7 @@ export async function PUT(
     const fields = [
       'name', 'brand', 'modelName', 'description', 'shortDescription',
       'price', 'stock', 'images', 'category', 'specifications',
-      'warrantyInfo', 'isFeatured', 'availabilityStatus'
+      'warrantyInfo', 'isFeatured', 'availabilityStatus', 'translations'
     ];
 
     for (const field of fields) {

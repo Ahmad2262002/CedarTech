@@ -1,32 +1,34 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "src/components/Providers";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
-  title: "Cedar Tech | The Pinnacle of Premium Electronics in Lebanon",
+  title: "Agha Tech plus | The Pinnacle of Premium Electronics in Lebanon",
   description:
-    "Experience the future of technology with Cedar Tech. Lebanon's most exclusive destination for flagship smartphones, elite Apple machinery, custom-built high-performance gaming rigs, and premium accessories. Delivering uncompromising quality directly from our Bekaa hub to anywhere in Lebanon.",
+    "Experience the future of technology with Agha Tech plus. Lebanon's premier online destination for flagship smartphones, Apple devices, custom gaming rigs, and high-end accessories. Sourced directly from trusted distributors and delivered in custom Agha Tech plus packaging across all Lebanon with Cash on Delivery.",
   keywords: [
-    "Cedar Tech",
-    "Luxury Electronics Lebanon",
+    "Agha Tech plus",
+    "Agha Tech",
+    "Electronics Lebanon",
     "Apple Store Lebanon",
     "Custom Gaming PC Lebanon",
-    "Flagship Smartphones",
-    "Premium Tech Bekaa",
-    "Kabelias tech store",
-    "Buy iPhone Lebanon"
+    "Flagship Smartphones Lebanon",
+    "Buy iPhone Lebanon",
+    "Tech Store Online Lebanon",
+    "Cash on Delivery Lebanon"
   ],
   openGraph: {
-    title: "Cedar Tech | Lebanon's Premier Technology Destination",
-    description: "Unleash peak performance. Discover exclusive flagship devices and custom-built rigs with official warranty and rapid COD delivery across Lebanon.",
+    title: "Agha Tech plus | Lebanon's Premier Technology Destination",
+    description: "Unleash peak performance. Discover exclusive flagship devices and tech gear with official warranty and rapid COD delivery across Lebanon.",
     type: "website",
     locale: "en_US",
-    siteName: "Cedar Tech"
+    siteName: "Agha Tech plus"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cedar Tech | Elite Electronics & Custom Rigs",
-    description: "Lebanon's most exclusive destination for flagship tech and custom builds.",
+    title: "Agha Tech plus | Elite Electronics & High-Performance Tech",
+    description: "Lebanon's premier online store for flagship tech, custom builds, and guaranteed packaging.",
   }
 };
 
@@ -43,6 +45,7 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col bg-brand-deep text-brand-text-primary selection:bg-accent-blue/40 selection:text-white font-sans">
         <Providers>{children}</Providers>
+        <SpeedInsights />
       </body>
     </html>
   );

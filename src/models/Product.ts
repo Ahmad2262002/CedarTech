@@ -1,5 +1,13 @@
 import mongoose, { Schema, Document, model, models } from 'mongoose';
 
+export interface IProductTranslation {
+  name?: string;
+  description?: string;
+  shortDescription?: string;
+  warrantyInfo?: string;
+  specifications?: Record<string, string>;
+}
+
 export interface IProduct extends Document {
   name: string;
   slug: string;
@@ -15,6 +23,7 @@ export interface IProduct extends Document {
   warrantyInfo?: string;
   isFeatured: boolean;
   availabilityStatus: 'in_stock' | 'low_stock' | 'out_of_stock';
+  translations?: Record<string, IProductTranslation>;
 }
 
 const ProductSchema = new Schema<IProduct>(
@@ -37,6 +46,7 @@ const ProductSchema = new Schema<IProduct>(
       enum: ['in_stock', 'low_stock', 'out_of_stock'],
       default: 'in_stock',
     },
+    translations: { type: Schema.Types.Mixed, default: {} },
   },
   { timestamps: true }
 );

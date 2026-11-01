@@ -50,7 +50,7 @@ export default async function AdminDashboardPage() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-black text-brand-text-primary tracking-tight">Overview</h1>
-        <p className="text-sm text-brand-text-secondary mt-1">Real-time statistics for Cedar Tech Store</p>
+        <p className="text-sm text-brand-text-secondary mt-1">Real-time statistics for Agha Tech plus Online Store</p>
       </div>
 
       {/* Grid of Cards */}

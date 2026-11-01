@@ -276,7 +276,7 @@ export default function AdminCategoriesPage() {
           </div>
           <h1 className="text-2xl font-black text-brand-text-primary tracking-tight">Product Categories</h1>
           <p className="text-xs text-brand-text-secondary">
-            {categories.length} categories active in Cedar Tech catalog
+            {categories.length} categories active in Agha Tech plus catalog
           </p>
         </div>
         <button

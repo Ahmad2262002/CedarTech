@@ -7,6 +7,7 @@ import {
   Package, RefreshCw, Filter, ChevronDown, Star, Layers, Link2,
   ArrowDown, ImagePlus, CheckSquare, Square
 } from 'lucide-react';
+import InstagramPostModal, { InstagramIcon } from 'src/components/admin/InstagramPostModal';
 
 /* ═══════════════════════════════════════════════════════════
    QUICK TAG PRESETS
@@ -238,6 +239,17 @@ export default function AdminProductsPage() {
   const [uploadedPreviews, setUploadedPreviews] = useState<{ url: string; name: string }[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  /* ── Instagram Generator Modal ── */
+  const [instagramProduct, setInstagramProduct] = useState<Product | null>(null);
+  const [isInstagramModalOpen, setIsInstagramModalOpen] = useState(false);
+  const [isNewInstagramProduct, setIsNewInstagramProduct] = useState(false);
+
+  const openInstagramModal = (prod: Product, isNew = false) => {
+    setInstagramProduct(prod);
+    setIsNewInstagramProduct(isNew);
+    setIsInstagramModalOpen(true);
+  };
+
   /* ════════════════════════════════════════════════════════
      DATA LOADING
   ════════════════════════════════════════════════════════ */
@@ -346,7 +358,8 @@ export default function AdminProductsPage() {
 
   const openEditModal = (product: Product) => {
     setEditingProduct(product);
-    setName(product.name); setBrand(product.brand);
+    setName(product.name);
+    setBrand(product.brand);
     setPrice(product.price.toString()); setStock(product.stock.toString());
     setCategory(typeof product.category === 'object' ? product.category._id : product.category);
     setWarrantyInfo(product.warrantyInfo || '');
@@ -465,6 +478,10 @@ export default function AdminProductsPage() {
       if (res.ok && data.success) {
         setIsModalOpen(false);
         loadData();
+        // Automatically open the Instagram Post Studio for newly created items!
+        if (!editingProduct && (data.product || payload)) {
+          openInstagramModal(data.product || { ...payload, _id: data.product?._id || 'new' }, true);
+        }
       } else {
         setFormError(data.error || 'Operation failed.');
       }
@@ -603,6 +620,14 @@ export default function AdminProductsPage() {
                       </td>
                       <td className="p-4 text-right space-x-1 shrink-0">
                         <button
+                          onClick={() => openInstagramModal(prod)}
+                          className="p-2 rounded-xl transition-all inline-block hover:scale-105"
+                          style={{ background: 'linear-gradient(135deg,#f58529,#dd2a7b,#8134af)', color: 'white', boxShadow: '0 2px 10px rgba(221,42,123,0.35)' }}
+                          title="Generate Instagram Post & Link"
+                        >
+                          <InstagramIcon className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => openEditModal(prod)}
                           className="p-2 rounded-xl transition-colors inline-block"
                           style={{ color: '#8e8e93' }}
@@ -686,6 +711,14 @@ export default function AdminProductsPage() {
                   
                   {/* Action Buttons */}
                   <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => openInstagramModal(prod)}
+                      className="p-2.5 rounded-xl transition-all flex items-center justify-center text-white"
+                      style={{ background: 'linear-gradient(135deg,#f58529,#dd2a7b,#8134af)', boxShadow: '0 2px 10px rgba(221,42,123,0.35)' }}
+                      title="Generate Instagram Post & Link"
+                    >
+                      <InstagramIcon className="w-4 h-4" />
+                    </button>
                     <button
                       onClick={() => openEditModal(prod)}
                       className="p-2.5 rounded-xl transition-all flex items-center justify-center border text-[#8e8e93] active:bg-[#2c2c2e] hover:text-white"
@@ -814,6 +847,13 @@ export default function AdminProductsPage() {
                   <input type="text" placeholder="e.g. 1 Year Official Warranty"
                     value={warrantyInfo} onChange={(e) => setWarrantyInfo(e.target.value)} className={inputCls} />
                 </div>
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className={labelCls}>Product Description</label>
+                <textarea rows={3} required placeholder="Detailed description of the product..."
+                  value={description} onChange={(e) => setDescription(e.target.value)} className={inputCls} />
               </div>
 
               {/* ── Product Photos Section ── */}
@@ -1415,6 +1455,21 @@ export default function AdminProductsPage() {
 
           </div>
         </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════
+          INSTAGRAM POST & LINK GENERATOR MODAL
+      ══════════════════════════════════════════════════ */}
+      {isInstagramModalOpen && instagramProduct && (
+        <InstagramPostModal
+          product={instagramProduct}
+          isOpen={isInstagramModalOpen}
+          onClose={() => {
+            setIsInstagramModalOpen(false);
+            setInstagramProduct(null);
+          }}
+          isNew={isNewInstagramProduct}
+        />
       )}
 
     </div>

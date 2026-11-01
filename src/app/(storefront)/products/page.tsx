@@ -2,8 +2,7 @@ import React from 'react';
 import connectDB from 'src/lib/db';
 import Product from 'src/models/Product';
 import Category from 'src/models/Category';
-import ProductCard from 'src/components/ProductCard';
-import ProductFiltersClient from 'src/components/ProductFiltersClient';
+import ProductsClient from 'src/components/ProductsClient';
 
 export const revalidate = 0;
 
@@ -84,58 +83,19 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const serializedCategories = JSON.parse(JSON.stringify(dbCategories));
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
-      
-      {/* Page Header */}
-      <div className="border-b border-white/10 pb-6">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-          {searchQuery ? `Results for "${searchQuery}"` : categorySlug ? `${categorySlug.toUpperCase()} Catalog` : 'Store Catalog'}
-        </h1>
-        <p className="text-sm text-brand-text-secondary mt-2">
-          Showing {serializedProducts.length} {serializedProducts.length === 1 ? 'product' : 'products'} with official local warranty
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        
-        {/* Filters Sidebar */}
-        <aside className="lg:col-span-1">
-          <ProductFiltersClient
-            categories={serializedCategories}
-            brands={dbBrands}
-            activeFilters={{
-              category: categorySlug,
-              brand: brandParam,
-              minPrice: params.minPrice || '',
-              maxPrice: params.maxPrice || '',
-              inStockOnly: params.inStockOnly || 'false',
-              sort: sortOption,
-              search: searchQuery,
-            }}
-          />
-        </aside>
-
-        {/* Product Cards Grid */}
-        <main className="lg:col-span-3">
-          {serializedProducts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center text-center py-20 rounded-3xl p-8 bg-brand-surface border border-white/10">
-              <span className="text-4xl">🔍</span>
-              <h3 className="text-white font-bold text-lg mt-4">No products found</h3>
-              <p className="text-sm mt-2 max-w-sm text-brand-text-secondary">
-                We couldn&apos;t find any products matching your criteria. Try adjusting your filters or search term.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-              {serializedProducts.map((product: any) => (
-                <ProductCard key={product._id} product={product} />
-              ))}
-            </div>
-          )}
-        </main>
-
-      </div>
-
-    </div>
+    <ProductsClient
+      products={serializedProducts}
+      categories={serializedCategories}
+      brands={dbBrands}
+      activeFilters={{
+        category: categorySlug,
+        brand: brandParam,
+        minPrice: params.minPrice || '',
+        maxPrice: params.maxPrice || '',
+        inStockOnly: params.inStockOnly || 'false',
+        sort: sortOption,
+        search: searchQuery,
+      }}
+    />
   );
 }

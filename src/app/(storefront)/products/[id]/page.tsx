@@ -13,10 +13,15 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+import mongoose from 'mongoose';
+
 async function getProductData(id: string) {
   try {
     await connectDB();
-    const product = await Product.findById(id).populate('category').lean();
+    const isObjectId = mongoose.Types.ObjectId.isValid(id);
+    const product = await Product.findOne(isObjectId ? { _id: id } : { slug: id })
+      .populate('category')
+      .lean();
     if (!product) return null;
 
     const related = await Product.find({

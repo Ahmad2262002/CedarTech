@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, brand, modelName, description, shortDescription, price, stock, images, category, specifications, warrantyInfo, isFeatured, availabilityStatus } = body;
+    const { name, brand, modelName, description, shortDescription, price, stock, images, category, specifications, warrantyInfo, isFeatured, availabilityStatus, translations } = body;
 
     if (!name || !brand || !description || price === undefined || stock === undefined || !category) {
       return NextResponse.json({ error: 'Required fields missing: name, brand, description, price, stock, category' }, { status: 400 });
@@ -80,6 +80,7 @@ export async function POST(req: Request) {
       warrantyInfo,
       isFeatured: !!isFeatured,
       availabilityStatus: availabilityStatus || 'in_stock',
+      translations: translations || {},
     });
 
     return NextResponse.json({ success: true, product }, { status: 201 });

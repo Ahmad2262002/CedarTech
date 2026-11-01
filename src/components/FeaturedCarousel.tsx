@@ -7,6 +7,8 @@ import {
   Star, ShieldCheck, Zap, ArrowRight,
 } from 'lucide-react';
 import { useCart } from 'src/lib/context/CartContext';
+import { useTranslation } from 'src/context/LanguageContext';
+import { getLocalizedProduct } from 'src/lib/getLocalizedProduct';
 
 interface Product {
   _id: string;
@@ -20,6 +22,8 @@ interface Product {
   category?: { name: string };
   warrantyInfo?: string;
   stock?: number;
+  translations?: Record<string, any>;
+  specifications?: Record<string, string>;
 }
 
 interface Props { products: Product[] }
@@ -36,6 +40,7 @@ const SLOT_ACCENTS = [
 
 export default function FeaturedCarousel({ products }: Props) {
   const { addToCart } = useCart();
+  const { locale, t } = useTranslation();
   const [active, setActive]         = useState(0);
   const [prev, setPrev]             = useState<number | null>(null);
   const [direction, setDirection]   = useState<'left' | 'right'>('right');
@@ -167,6 +172,7 @@ export default function FeaturedCarousel({ products }: Props) {
               const isPrev = i === prev;
               if (!isCur && !isPrev) return null;
 
+              const localizedP = getLocalizedProduct(p, locale);
               const pAccent = SLOT_ACCENTS[i % SLOT_ACCENTS.length];
               const pImg    = p.images?.[0] || '';
               const pOutOfStock = p.availabilityStatus === 'out_of_stock';
@@ -193,15 +199,15 @@ export default function FeaturedCarousel({ products }: Props) {
                       )}
                       {pOutOfStock ? (
                         <span className="text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
-                          Out of Stock
+                          {t('product.out_of_stock', 'Out of Stock')}
                         </span>
                       ) : pLowStock ? (
                         <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                          <Zap className="w-2.5 h-2.5" /> Low Stock
+                          <Zap className="w-2.5 h-2.5" /> {t('product.low_stock', 'Low Stock')}
                         </span>
                       ) : (
                         <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> In Stock
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> {t('product.in_stock', 'In Stock')}
                         </span>
                       )}
                     </div>
@@ -213,19 +219,19 @@ export default function FeaturedCarousel({ products }: Props) {
 
                     {/* Name */}
                     <h3 className="text-3xl md:text-4xl font-black tracking-tight leading-tight text-white">
-                      {p.name}
+                      {localizedP.name}
                     </h3>
 
                     {/* Description */}
                     <p className="text-sm text-brand-text-secondary leading-relaxed line-clamp-3 max-w-md">
-                      {p.description}
+                      {localizedP.description || p.description}
                     </p>
 
                     {/* Warranty */}
-                    {p.warrantyInfo && (
+                    {localizedP.warrantyInfo && (
                       <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400">
                         <ShieldCheck className="w-4 h-4 shrink-0" />
-                        <span>{p.warrantyInfo}</span>
+                        <span>{localizedP.warrantyInfo}</span>
                       </div>
                     )}
 
@@ -253,15 +259,15 @@ export default function FeaturedCarousel({ products }: Props) {
                         }}
                       >
                         <ShoppingBag className="w-4 h-4" />
-                        {addedFlash && isCur ? 'Added ✓' : 'Add to Cart'}
+                        {addedFlash && isCur ? t('product.added', 'Added ✓') : t('product.add_to_cart', 'Add to Cart')}
                       </button>
 
                       <Link
                         href={`/products/${p._id}`}
                         className="flex items-center gap-2 font-semibold text-sm py-3 px-6 rounded-2xl bg-white/5 border border-border-default text-brand-text-secondary hover:text-white hover:bg-white/10 transition-all"
                       >
-                        View Details
-                        <ArrowRight className="w-4 h-4" />
+                        {t('common.view_details', 'View Details')}
+                        <ArrowRight className="w-4 h-4 rtl:rotate-180" />
                       </Link>
                     </div>
                   </div>
